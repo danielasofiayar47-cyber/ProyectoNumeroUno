@@ -1,10 +1,37 @@
-name: Hola Mundo Workflow
+name: CI Pipeline
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  say-hello:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Decir Hola Mundo
-        run: echo "Hola Mundo"
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Cambia según la versión que uses
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Generate coverage report
+        run: npm run coverage # Asumiendo que tienes un script para generar reporte
+
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/  # Cambia según la ubicación del reporte
